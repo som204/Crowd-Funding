@@ -4,6 +4,7 @@ import connectDb from './Db/db.js';
 import morgan from 'morgan';
 import userRoute from './Routes/user.routes.js';
 import projectRoute from './Routes/project.routes.js'
+import paymentRoute from './Routes/payment.routes.js'
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
 
@@ -21,8 +22,9 @@ server.use(express.json({ limit: "10mb" }));  // Adjust limit as needed
 server.use(express.urlencoded({ extended: true, limit: "10mb" }));
 server.use(cookieParser())
 
-server.use('/user',userRoute)
-server.use('/project',projectRoute)
+server.use('/user',userRoute);
+server.use('/project',projectRoute);
+server.use('/payment',paymentRoute);
 
 server.get('/',(req,res)=>{
     res.send("Hello");

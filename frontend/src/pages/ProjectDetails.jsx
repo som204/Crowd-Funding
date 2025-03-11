@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { projects, pledges } from '../lib/storage'
 import { format } from 'date-fns'
+import {Payment} from '../components/Payment'
+
 
 export function ProjectDetails() {
   const { id } = useParams()
@@ -10,6 +12,7 @@ export function ProjectDetails() {
   const [project, setProject] = useState(null)
   const [loading, setLoading] = useState(true)
   const [pledgeAmount, setPledgeAmount] = useState('')
+ 
 
   useEffect(() => {
     const projectData = projects.getById(id)
@@ -97,6 +100,7 @@ export function ProjectDetails() {
         </div>
 
         {user && (
+          
           <form onSubmit={handlePledge} className="mt-6">
             <div className="flex gap-4">
               <input
@@ -109,14 +113,10 @@ export function ProjectDetails() {
                 step="0.01"
                 required
               />
-              <button
-                type="submit"
-                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-              >
-                Back this project
-              </button>
+              <Payment amount={parseInt(pledgeAmount)}/>
             </div>
           </form>
+          
         )}
       </div>
     </div>

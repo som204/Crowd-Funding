@@ -5,22 +5,24 @@ const razorpayInstance = new Razorpay({
     key_secret: process.env.RAZORPAY_SECRET
 });
 
-const createOrder = async (amount, currency) => {
+export const createOrder = async (amount) => {
+    const receipt = `orderId_${new Date().getTime()}`;
     const options = {
-        amount: amount * 100,
-        currency: currency,
-        receipt: 'receipt#1',
+        amount: amount.amount,
+        currency: "INR",
+        receipt: receipt,
         payment_capture: 1
     };
     try {
         const order = await razorpayInstance.orders.create(options);
         return order;
     } catch (error) {
+        console.log(error)
         throw new Error(error);
     }
 };
 
-const verifyPayment = (paymentDetails) => {
+export const verifyPayment = (paymentDetails) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = paymentDetails;
     const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET);
 
@@ -34,7 +36,7 @@ const verifyPayment = (paymentDetails) => {
     }
 };
 
-const fetchPaymentStatus = async (paymentId) => {
+export const fetchPaymentStatus = async (paymentId) => {
     try {
         const payment = await razorpayInstance.payments.fetch(paymentId);
         return payment;
@@ -43,8 +45,3 @@ const fetchPaymentStatus = async (paymentId) => {
     }
 };
 
-module.exports = {
-    createOrder,
-    verifyPayment,
-    fetchPaymentStatus
-};
