@@ -39,16 +39,25 @@ export function ProjectCard({ projectid }) {
     <div className="relative bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
       {/* Payment & Closed Status Badges */}
       {closed && (
-        <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase rounded-md shadow-md">
-          Project Closed
-        </div>
-      )}
+        <>
+          {/* Project Closed Label */}
+          <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase rounded-md shadow-md">
+            Project Closed
+          </div>
 
-    {payoutSuccess === true ?  (
-        <div className="absolute top-3 left-3 bg-green-600 text-white px-3 py-1 text-xs font-bold uppercase rounded-md shadow-md">
-          Payment Successful
-        </div>
-      ) : null }
+          {/* Payment Status Label */}
+          <div
+            className={`absolute top-3 left-3 px-3 py-1 text-xs font-bold uppercase rounded-md shadow-md 
+      ${
+        payoutSuccess
+          ? "bg-green-600 text-white"
+          : "bg-yellow-500 text-gray-900"
+      }`}
+          >
+            {payoutSuccess ? "Payment Successful" : "Payment Pending"}
+          </div>
+        </>
+      )}
 
       {/* Project Image */}
       <img
