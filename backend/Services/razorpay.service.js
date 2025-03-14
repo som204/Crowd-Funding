@@ -70,41 +70,43 @@ export const createFundAccount = async (contactId, accountNumber, ifsc, name) =>
     });
 };
 
-// // ✅ Create a Payout
-// export const createPayout = async (fundAccountId, amount) => {
-//     return await makeRequest("/payouts", "POST", {
-//         account_number: "2323230032525252", // Razorpay Virtual Account
-//         fund_account_id: fundAccountId,
-//         amount: amount * 100, // Convert INR to paise
-//         currency: "INR",
-//         mode: "IMPS",
-//         purpose: "payout",
-//         queue_if_low_balance: true
-//     });
-// };
-
+// ✅ Create a Payout
+//This Func might wont work due to razorpayX. As it only allow business verfied user to use it.
+//If this Func wont work use the below dummy Func.
 export const createPayout = async (fundAccountId, amount) => {
-    try {
-        // Simulating a delay (like real API response)
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Return a mock payout response
-        return {
-            id: `pout_${Math.floor(Math.random() * 100000)}`,
-            entity: "payout",
-            fund_account_id: fundAccountId,
-            amount:amount,
-            currency: "INR",
-            status: "processed",
-            mode: "IMPS",
-            purpose: "payout",
-            created_at: Date.now(),
-        };
-    } catch (error) {
-        console.error("❌ Error Creating Dummy Payout:", error);
-        throw error;
-    }
+    return await makeRequest("/payouts", "POST", {
+        account_number: "2323230032525252", // Razorpay Virtual Account
+        fund_account_id: fundAccountId,
+        amount: amount * 100, // Convert INR to paise
+        currency: "INR",
+        mode: "IMPS",
+        purpose: "payout",
+        queue_if_low_balance: true
+    });
 };
+
+// export const createPayout = async (fundAccountId, amount) => {
+//     try {
+//         // Simulating a delay (like real API response)
+//         await new Promise((resolve) => setTimeout(resolve, 1000));
+
+//         // Return a mock payout response
+//         return {
+//             id: `pout_${Math.floor(Math.random() * 100000)}`,
+//             entity: "payout",
+//             fund_account_id: fundAccountId,
+//             amount:amount,
+//             currency: "INR",
+//             status: "processed",
+//             mode: "IMPS",
+//             purpose: "payout",
+//             created_at: Date.now(),
+//         };
+//     } catch (error) {
+//         console.error("❌ Error Creating Dummy Payout:", error);
+//         throw error;
+//     }
+// };
 
 
 
