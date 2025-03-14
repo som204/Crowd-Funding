@@ -1,37 +1,69 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
-import { ProjectCard } from '../components/ProjectCard'
-import { projects, pledges } from '../lib/storage'
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { ProjectCard } from "../components/ProjectCard";
+import PledgeCard from "../components/PledgeCard";
 
 export function Dashboard() {
-  const { user } = useAuth()
-  const [userProjects, setUserProjects] = useState([])
-  const [userPledges, setUserPledges] = useState([])
-  const [loading, setLoading] = useState(true)
+  const { user } = useAuth();
+  const [userProjects, setUserProjects] = useState([]);
+  const [userPledges, setUserPledges] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
 
-    // Fetch user's projects and pledges
-    const createdProjects = projects.getByCreator(user.id)
-    const userPledges = pledges.getByBacker(user.id)
-    const pledgedProjects = userPledges.map(pledge => {
-      const project = projects.getById(pledge.project_id)
-      return project
-    })
+    const id = user._id;
+    const fetchUserProjects = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/project/creatorid/${id}`,
+          {
+            credentials: "include",
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        const data = await response.json();
+        setUserProjects(data);
+      } catch (error) {
+        console.error("Error fetching user projects:", error);
+      }
+    };
 
-    setUserProjects(createdProjects)
-    setUserPledges(pledgedProjects)
-    setLoading(false)
-  }, [user])
+    const fetchUserPledges = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/pledge/backerid/${id}`,
+          {
+            credentials: "include",
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        const pledgesData = await response.json();
+        setUserPledges(pledgesData);
+      } catch (error) {
+        console.error("Error fetching pledged projects:", error);
+      }
+    };
+
+    const fetchData = async () => {
+      await Promise.all([fetchUserProjects(), fetchUserPledges()]);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [user]);
 
   if (!user) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900">Please log in to view your dashboard</h2>
+        <h2 className="text-2xl font-bold text-gray-900">
+          Please log in to view your dashboard
+        </h2>
       </div>
-    )
+    );
   }
 
   if (loading) {
@@ -39,7 +71,7 @@ export function Dashboard() {
       <div className="flex justify-center items-center min-h-[50vh]">
         <div className="text-gray-600">Loading...</div>
       </div>
-    )
+    );
   }
 
   return (
@@ -59,32 +91,45 @@ export function Dashboard() {
           <h2 className="text-2xl font-bold mb-4">My Projects</h2>
           {userProjects.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {userProjects.map(project => (
-                <Link key={project.id} to={`/project/${project.id}`}>
-                  <ProjectCard project={project} />
-                </Link>
-              ))}
+              {userProjects
+                .slice()
+                .reverse()
+                .map((project) => (
+                  <Link key={project._id} to={`/project/${project._id}`}>
+                    <ProjectCard projectid={project._id} />
+                  </Link>
+                ))}
             </div>
           ) : (
-            <p className="text-gray-600">You haven't created any projects yet.</p>
+            <p className="text-gray-600">
+              You haven't created any projects yet.
+            </p>
           )}
         </section>
 
         <section>
           <h2 className="text-2xl font-bold mb-4">Backed Projects</h2>
           {userPledges.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {userPledges.map(project => (
-                <Link key={project.id} to={`/project/${project.id}`}>
-                  <ProjectCard project={project} />
-                </Link>
-              ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20">
+              {userPledges
+                .slice()
+                .reverse()
+                .map((project) => (
+                  <Link
+                    key={project.project_id}
+                    to={`/project/${project.project_id}`}
+                  >
+                    <PledgeCard pledge={project} />
+                  </Link>
+                ))}
             </div>
           ) : (
-            <p className="text-gray-600">You haven't backed any projects yet.</p>
+            <p className="text-gray-600">
+              You haven't backed any projects yet.
+            </p>
           )}
         </section>
       </div>
     </div>
-  )
+  );
 }

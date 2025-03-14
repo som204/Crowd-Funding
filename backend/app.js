@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import userRoute from './Routes/user.routes.js';
 import projectRoute from './Routes/project.routes.js'
 import paymentRoute from './Routes/payment.routes.js'
+import pledgeRoute from './Routes/pledge.routes.js'
+import transactionRoute from './Routes/transaction.routes.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
 
@@ -18,16 +20,18 @@ const server=express();
 connectDb();
 server.use(cors(corsOptions))
 server.use(morgan('dev'))
-server.use(express.json({ limit: "10mb" }));  // Adjust limit as needed
+server.use(express.json({ limit: "10mb" }));
 server.use(express.urlencoded({ extended: true, limit: "10mb" }));
 server.use(cookieParser())
 
 server.use('/user',userRoute);
 server.use('/project',projectRoute);
 server.use('/payment',paymentRoute);
+server.use('/pledge',pledgeRoute);
+server.use('/transaction',transactionRoute);
 
 server.get('/',(req,res)=>{
-    res.send("Hello");
+    res.send("API Working");
 });
 
 server.listen(3000,()=>{

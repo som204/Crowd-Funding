@@ -1,14 +1,16 @@
 import userModel from "../Models/user.model.js";
 import redisClient from "../Services/redis.service.js";
 import * as userService from "../Services/user.service.js";
+import * as paymentService from '../Services/razorpay.service.js';
 
 export const createUserController = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, mobile, name } = req.body;
     const existingUser = await userModel.findOne({ email });
     if (existingUser)
       return res.status(400).json({ error: "User already exists" });
-    const user = await userService.createUserService(email, password);
+    const contactId = await paymentService.createContact(name, email, mobile);
+    const user = await userService.createUserService(email, password, mobile, name, contactId.id);
     const token = await user.generateJWT();
     delete user._doc.password;
     return res.cookie("token", token).status(200).send({ user });

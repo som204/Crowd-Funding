@@ -8,6 +8,7 @@ export const createProjectService = async (projectData) => {
       const newProject = await projectModel.create(projectData);
       return newProject;
     } catch (error) {
+      console.log(error)
       throw new Error(error.message);
     }
   };
