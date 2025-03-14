@@ -8,7 +8,7 @@ const route = Router();
 route.post('/create',authorization,projectController.createProjectController)
 route.get('/all',projectController.getAllProjectController)
 route.get('/creatorid/:id',authorization,projectController.getByCreatorIdController)
-route.get('/projectid/:id',authorization,projectController.getByProjectIdController)
+route.get('/projectid/:id',projectController.getByProjectIdController)
 
 
 export default route;
