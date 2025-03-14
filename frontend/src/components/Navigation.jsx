@@ -22,6 +22,8 @@ export function Navigation() {
       navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
+    }finally{
+      setIsProfileOpen(false);
     }
   }
 
